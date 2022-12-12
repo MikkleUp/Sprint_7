@@ -20,13 +20,13 @@ public class OrderCreationTest {
         this.response = response;
     }
 
-    @Parameterized.Parameters
-    public static Object[][] getResponse() {
-        return new Object[][] {
-                {Order.getOrderBlackGrey()},
-                {Order.getOrderBlack()},
-                {Order.getOrderGrey()},
-                {Order.getOrderAny()},
+    @Parameterized.Parameters(name = "Order: {0}")
+    public static Object[] getResponse() {
+        return new Object[] {
+                Order.getOrderBlackGrey(),
+                Order.getOrderBlack(),
+                Order.getOrderGrey(),
+                Order.getOrderAny(),
         };
     }
 

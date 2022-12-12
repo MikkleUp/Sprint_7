@@ -31,7 +31,6 @@ public class CourierCreationTest {
         courierClient
                 .create(courier)
                 .statusCode(201);
-        courierClient.tearDown(creds);
     }
 
     @Test
@@ -39,13 +38,15 @@ public class CourierCreationTest {
     @Description("Проверка создания курьера при передаче в теле запроса валидных значений: login и password")
     public void courierIsCreatedWithRequiredFields() {
         courier = Courier.getCourierWithoutFirstName();
+        creds = CourierCredentials.from(courier);
         courierClient
                 .create(courier)
                 .statusCode(201);
 
         creds = CourierCredentials.from(courier);
-        courierClient.tearDown(creds);
     }
+
+
 
     @Test
     @DisplayName("Возвращается ok: true при успешном запросе")
@@ -56,7 +57,6 @@ public class CourierCreationTest {
                 .extract()
                 .path("ok");
         assertTrue(isOk);
-        courierClient.tearDown(creds);
     }
 
     @Test
@@ -64,6 +64,7 @@ public class CourierCreationTest {
     @Description("Проверка возвращения message с сообщением об ошибке в теле ответа при запросе на создание курьера без логина")
     public void checkCourierCreationWithoutLogin() {
         courier = Courier.getCourierWithoutLogin();
+        creds = null;
         String message = courierClient.create(courier)
                 .statusCode(400)
                 .extract()
@@ -76,6 +77,7 @@ public class CourierCreationTest {
     @Description("Проверка возвращения message с сообщением об ошибке в теле ответа при запросе на создание курьера без логина")
     public void checkCourierCreationWithoutPassword() {
         courier = Courier.getCourierWithoutPassword();
+        creds = null;
         String message = courierClient.create(courier)
                 .statusCode(400)
                 .extract()
@@ -90,7 +92,6 @@ public class CourierCreationTest {
         courierClient.create(courier);
         courierClient.create(courier)
                 .statusCode(409);
-        courierClient.tearDown(creds);
     }
 
     @Test
@@ -105,6 +106,12 @@ public class CourierCreationTest {
                 .extract()
                 .path("message");
         assertEquals("Этот логин уже используется. Попробуйте другой.", message);
-        courierClient.tearDown(creds);
+
+    }
+    @After
+    public void tearDown() {
+        if (creds != null){
+            courierClient.tearDown(creds);
+        }
     }
 }
